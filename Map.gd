@@ -15,10 +15,12 @@ func _ready():
 
 func _unhandled_input(event):
 	# A simple code to show how to you can manipulate hexes using the mouse.
-	# left-click converts to water, right-click, to earth
 	var relative_pos = $"HexGrid/Area2D".transform.affine_inverse() * event.position
 	var hexCell = HexGrid.get_hex_at(relative_pos)
 	if event.is_action_pressed("ui_select"): 
+		# Left-click converts current hex to Water.
 		self.set_cellv(hexCell.offset_coords, 19)
-	elif event.is_action_pressed("ui_cancel"): 
-		self.set_cellv(hexCell.offset_coords, 0)
+	elif event.is_action_pressed("ui_cancel"):
+		# Right-click, converts everyone adjacent to current hex to Mountains
+		for neighbourHex in hexCell.get_all_adjacent():
+			self.set_cellv(neighbourHex.offset_coords, 1)
