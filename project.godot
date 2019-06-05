@@ -15,7 +15,8 @@ _global_script_class_icons={
 
 [application]
 
-config/name="New Game Project"
+config/name="Hexgrid-Tilemap Demo"
+run/main_scene="res://Map.tscn"
 config/icon="res://icon.png"
 
 [display]
