@@ -2,7 +2,7 @@
 
 This simple demo simply displays how to connect a hexgrid according [to this guide](https://www.redblobgames.com/grids/hexagons/implementation.html) to a Godot tilemap (like in the hex demo in the asset store)
 
-Hex code taken from: https://github.com/romlok/godot-gdhexgrid and modified to use internal Godot functoins. Please check that repository for usage of the included libraries.
+Hex code taken from: https://github.com/romlok/godot-gdhexgrid and modified to use internal Godot functions. Please check that repository for usage of the included libraries.
 
 Tileset created quicky via GIMP for purposes of this demo. 
 
