@@ -153,7 +153,9 @@
 		visited every tile it can reach, so try not to path to the impossible.
 	
 """
-extends Reference
+extends TileMap
+class_name HexMap
+
 
 var HexCell = preload("./HexCell.gd")
 # Duplicate these from HexCell for ease of access
@@ -164,14 +166,7 @@ const DIR_S = Vector3(0, -1, 1)
 const DIR_SW = Vector3(-1, 0, 1)
 const DIR_NW = Vector3(-1, 1, 0)
 const DIR_ALL = [DIR_N, DIR_NE, DIR_SE, DIR_S, DIR_SW, DIR_NW]
-
-# Allow the user to scale the hex for fake perspective or somesuch
-export(Vector2) var hex_scale = Vector2(1, 1) setget set_hex_scale
-
-var base_hex_size = Vector2(1, sqrt(3)/2)
-var hex_size
-var hex_transform
-var hex_transform_inv
+const hex_size = Vector2(64,64) # We define how big the tiles for our hexes are
 # Pathfinding obstacles {Vector2: cost}
 # A zero cost means impassable
 var path_obstacles = {}
@@ -182,39 +177,22 @@ var path_barriers = {}
 var path_bounds = Rect2()
 var path_cost_default = 1.0
 
-
-func _init():
-	set_hex_scale(hex_scale)
-
-
-func set_hex_scale(scale):
-	# We need to recalculate some stuff when projection scale changes
-	hex_scale = scale
-	hex_size = base_hex_size * hex_scale
-	hex_transform = Transform2D(
-		Vector2(hex_size.x * 3/4, -hex_size.y / 2),
-		Vector2(0, -hex_size.y),
-		Vector2(0, 0)
-	)
-	hex_transform_inv = hex_transform.affine_inverse()
-	
-
 """
 	Converting between hex-grid and 2D spatial coordinates
 """
-func get_hex_center(hex):
-	# Returns hex's centre position on the projection plane
+func get_hex_center(hex: HexCell) -> Vector2:
+	# Returns a hex's centre position on the projection plane
 	hex = HexCell.new(hex)
-	return hex_transform * hex.axial_coords
+	return map_to_world(hex.get_offset_coords()) + hex_size/2
 	
-func get_hex_at(coords):
+func get_hex_at(coords) -> HexCell:
 	# Returns a HexCell at the given Vector2/3 on the projection plane
 	# If the given value is a Vector3, its x,z coords will be used
 	if typeof(coords) == TYPE_VECTOR3:
 		coords = Vector2(coords.x, coords.z)
-	return HexCell.new(hex_transform_inv * coords)
+	return HexCell.new(coords)
 	
-func get_hex_center3(hex, y=0):
+func get_hex_center3(hex, y=0) -> Vector3:
 	# Returns hex's centre position as a Vector3
 	var coords = get_hex_center(hex)
 	return Vector3(coords.x, y, coords.y)
@@ -327,15 +305,15 @@ func get_move_cost(coords, direction):
 			return 0
 		cost += barrier_cost
 	return cost
-	
 
-func get_path(start, goal, exceptions=[]):
-	# DEPRECATED!
-	# The function `get_path` is used by Godot for something completely different,
-	# so we renamed it here to `find_path`.
-	push_warning("HexGrid.get_path has been deprecated, use find_path instead.")
-	return find_path(start, goal, exceptions)
-	
+
+#func get_path(start, goal, exceptions=[]):
+#	# DEPRECATED!
+#	# The function `get_path` is used by Godot for something completely different,
+#	# so we renamed it here to `find_path`.
+#	push_warning("HexGrid.get_path has been deprecated, use find_path instead.")
+#	return find_path(start, goal, exceptions)
+
 func find_path(start, goal, exceptions=[]):
 	# Light a starry path from the start to the goal, inclusive
 	start = HexCell.new(start).axial_coords

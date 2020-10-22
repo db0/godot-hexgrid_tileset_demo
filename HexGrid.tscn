@@ -24,14 +24,17 @@ margin_left = 5.0
 margin_top = -39.0
 margin_right = 52.0
 margin_bottom = -25.0
-text = "SCREEN"
+text = "TILEMAP"
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="AreaCoords" type="Label" parent="Area2D/Highlight"]
 margin_left = 55.0
 margin_top = -39.0
 margin_right = 105.0
 margin_bottom = -25.0
-text = "SCREEN"
+text = "TILEMAP"
 
 [node name="Label2" type="Label" parent="Area2D/Highlight"]
 margin_left = 25.0
